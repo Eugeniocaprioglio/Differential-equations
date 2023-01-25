@@ -1,15 +1,8 @@
 import numpy as np
-vmn = [
-     [1, 2, 3, 11],
-     [4, 5, 6, -2],
-     [7, 8, 9, 4],
-     [1, 1, 5, 3]]
-
-print(vmn[1][2])
 
 
+#-------In this part we build a function that returns the diffusion matrix-----------
 
-# V_m,n-1
 
 def right_v(t):
 
@@ -55,6 +48,10 @@ def up_v(t):
 def diffusion_matrix(t):
     return np.array(right_v(t)) + np.array(left_v(t)) + np.array(up_v(t)) + np.array (down_v(t))
 
+
+#------- In this part we build a function that multiplies a matrix of scalars by an array of matrices------------------
+
+
 def matrix_vector(mat, t):
     vec_of_mat = np.array(t)
     arr = [0 for i in range(len(t))]
@@ -65,33 +62,6 @@ def matrix_vector(mat, t):
             arr[i] += vec_of_mat[j]*mat[i][j]
     return arr
 
-a = [[
-     [1, 2, 3, 11],
-     [4, 5, 6, -2],
-     [7, 8, 9, 4],
-     [1, 1, 5, 3]],
-     [
-     [1, 2, 3, 11],
-     [4, 5, 6, -2],
-     [7, 8, 9, 4],
-     [1, 1, 5, 3]],
-     [
-     [1, 2, 3, 11],
-     [4, 5, 6, -2],
-     [7, 8, 9, 4],
-     [1, 1, 5, 3]]]
-
-b = [[1, 2, -1],
-     [-3, 2, 1],
-     [0, 2, 0]]
     
 
 
-
-print(right_v(vmn))
-print(left_v(vmn))
-print(up_v(vmn))
-print(down_v(vmn))
-print(diffusion_matrix(vmn))
-
-print(matrix_vector(b, a))
