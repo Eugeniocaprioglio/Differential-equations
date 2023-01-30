@@ -1,0 +1,72 @@
+import math
+import numpy as np
+
+def find_max(m, k):
+    arr = []
+    for i in range(len(m)):
+       arr.append(abs(m[i][k]))
+    return np.argmax(arr)
+    
+
+
+def order_matrix(m):
+
+    arr = []
+    for i in range(len(m)):
+        j = find_max(m,i)
+        arr.append(m[j])
+        m.pop(j)
+    return arr
+        
+
+
+def reduced_product(a, x, k):
+    rp = 0
+    for j in range(len(x)):
+        if (j != k):
+            rp += a[j]*x[j]
+    return rp
+
+def epsilon(x1):
+    e = 0
+    for i in range(len(x1)):
+        e += (x1[i])**2
+    return math.sqrt(e)
+
+def step_algo(matrix: list, y_vector: list, x_vector: list):
+    
+    for i in range(len(matrix)):
+        x_vector[i] = (1/matrix[i][i])*(y_vector[i] - reduced_product(matrix[i], x_vector, i))
+    return x_vector
+
+def gauss_seidel(mat_a, b_vector, x_initial, max_iterations, toll):
+
+    #mat_a = order_matrix(mat_a)
+    
+    x1 = x_initial
+    i = 0
+    a = np.array([1 for i in range(len(x_initial))])
+    while (epsilon(a) > toll and i < max_iterations):
+        a = np.array(x1) - np.array(step_algo(mat_a, b_vector, x1))
+        i += 1
+    print(i)
+    print(a)    
+    return x1
+
+
+
+mat = [[-4,1,1,0,0,0,0,0],
+       [2,-4,0,1,0,0,0,0],
+       [1,0,-4,1,1,0,0,0],
+       [0,1,2,-4,0,1,0,0],
+       [0,0,1,0,-4,1,1,0],
+       [0,0,0,1,2,-4,0,1],
+       [0,0,0,0,2,0,-9,1],
+       [0,0,0,0,0,2,2,-9]]
+
+y = [-1000,-500,-500,0,-500,0,-2000,-1500]
+
+x0 = [100, 10, 1,20, 3, 45, 4,0]
+
+print(gauss_seidel(mat, y, x0, 40, 0.01))
+
