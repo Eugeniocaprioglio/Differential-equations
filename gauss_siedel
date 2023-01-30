@@ -7,10 +7,7 @@ def find_max(m, k):
        arr.append(abs(m[i][k]))
     return np.argmax(arr)
     
-
-
 def order_matrix(m):
-
     arr = []
     for i in range(len(m)):
         j = find_max(m,i)
@@ -18,8 +15,6 @@ def order_matrix(m):
         m.pop(j)
     return arr
         
-
-
 def reduced_product(a, x, k):
     rp = 0
     for j in range(len(x)):
@@ -33,24 +28,18 @@ def epsilon(x1):
         e += (x1[i])**2
     return math.sqrt(e)
 
-def step_algo(matrix: list, y_vector: list, x_vector: list):
-    
+def step_algo(matrix: list, y_vector: list, x_vector: list): 
     for i in range(len(matrix)):
         x_vector[i] = (1/matrix[i][i])*(y_vector[i] - reduced_product(matrix[i], x_vector, i))
     return x_vector
 
 def gauss_seidel(mat_a, b_vector, x_initial, max_iterations, toll):
-
-    #mat_a = order_matrix(mat_a)
-    
     x1 = x_initial
     i = 0
     a = np.array([1 for i in range(len(x_initial))])
     while (epsilon(a) > toll and i < max_iterations):
         a = np.array(x1) - np.array(step_algo(mat_a, b_vector, x1))
-        i += 1
-    print(i)
-    print(a)    
+        i += 1  
     return x1
 
 
