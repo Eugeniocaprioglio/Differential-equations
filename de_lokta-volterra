@@ -1,0 +1,52 @@
+import math	
+import numpy as np
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+
+#---Now we define the Lokta-Volterra equations where-----
+#---f is the number of prays------------------------------
+#---and g is the number of predartors.--------------------
+
+def lokta_volterra(y, t, a, b, c, d):
+    prey, predator = y
+    return [
+        a*prey - b*prey*predator,
+        c*prey*predator - d*predator
+    ]
+
+#-----Setting initial conditions--------------------------
+
+initial_prey = 100
+initial_predator = 400
+
+y0 = [initial_prey, initial_predator]
+
+#-----Setting the parameters-------------------------------
+
+alpha = 1.1
+beta = 0.004
+delta = 0.00022
+gamma = 0.5
+
+#------Setting the time span and discretization points----
+
+initial_time = 0
+final_time = 50
+discretization_points = 5000
+
+timePoints = np.linspace(initial_time, final_time, discretization_points)
+
+#------Calling odeint in order to obtain the solution
+
+solution = odeint(lokta_volterra, y0, timePoints, args=(alpha, beta, delta, gamma))
+
+#-----Plotting the solution-----------------------------
+
+axis = plt.subplot()
+axis.plot(timePoints, solution[:,0], label='Prey')
+axis.plot(timePoints, solution[:,1], label='Predator')
+
+
+plt.legend()
+plt.grid()
+plt.show()
