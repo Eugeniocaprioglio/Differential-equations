@@ -3,9 +3,7 @@ import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
-#---Now we define the Lokta-Volterra equations where-----
-#---f is the number of prays------------------------------
-#---and g is the number of predartors.--------------------
+#-----Lokta-Volterra-equation-definition------------------
 
 def lokta_volterra(y, t, a, b, c, d):
     prey, predator = y
@@ -16,37 +14,54 @@ def lokta_volterra(y, t, a, b, c, d):
 
 #-----Setting initial conditions--------------------------
 
-initial_prey = 100
-initial_predator = 400
+initial_prey = 10
+initial_predator = 40
 
-y0 = [initial_prey, initial_predator]
+initial_conditions = [initial_prey, initial_predator]
 
 #-----Setting the parameters-------------------------------
 
-alpha = 1.1
-beta = 0.004
-delta = 0.00022
-gamma = 0.5
+alpha = 1.1 #reproduction rate of prey in the absence of disturbance and when food is abundant 
+beta = 0.04 #prey death rate per predator
+delta = 0.22 #Reproduction rate of predators per prey
+gamma = 0.5 #Death rate of predators when prey is not available
 
 #------Setting the time span and discretization points----
 
 initial_time = 0
 final_time = 50
 discretization_points = 5000
+time = np.linspace(initial_time, final_time, discretization_points)
 
-timePoints = np.linspace(initial_time, final_time, discretization_points)
 
-#------Calling odeint in order to obtain the solution
+#------Calling odeint in order to obtain the solution---
 
-solution = odeint(lokta_volterra, y0, timePoints, args=(alpha, beta, delta, gamma))
+
+solution = odeint(lokta_volterra, initial_conditions, time, args=(alpha, beta, delta, gamma))
+
+
+#------Unpack the solutions----------------------------
+
+
+prey_t = solution[:,0]
+predator_t = solution[:,1]
+
 
 #-----Plotting the solution-----------------------------
 
-axis = plt.subplot()
-axis.plot(timePoints, solution[:,0], label='Prey')
-axis.plot(timePoints, solution[:,1], label='Predator')
+def plot_trajectory():
+    axis = plt.subplot()
+    axis.plot(time, prey_t, label='Prey')
+    axis.plot(time, predator_t, label='Predator')
+    plt.legend()
+    plt.grid()
+    plt.show()
 
+def plot_phase():
+    axis = plt.subplot()
+    axis.plot(prey_t, predator_t, label='Prey vs predator')
+    plt.legend()
+    plt.grid()
+    plt.show()
 
-plt.legend()
-plt.grid()
-plt.show()
+plot_phase()
