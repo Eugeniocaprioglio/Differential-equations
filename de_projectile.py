@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 def projectile(s, t, g, wind, m, mu, p):
 
     x, y, vx, vy = s
-
     return [
         vx,
         vy,
@@ -20,43 +19,46 @@ def projectile(s, t, g, wind, m, mu, p):
 
 #-----Set the initial conditions-----------------------------
 
+#  Initial position
 x0 = 0
 y0 = 0
-v0 = 80
-theta = 30
 
+#  Initial speed and shooting angle
+v0 = 20
+theta = 70
+
+#  Vector coordinates of the initial velocity
 v0x = v0*math.cos(math.radians(theta))
 v0y = v0*math.sin(math.radians(theta))
 
-s0 = [x0, y0, v0x, v0y]
+#   Initial conditions array
+initial_conditions = [x0, y0, v0x, v0y]
 
 #------Set the constants of the model-------------------------
 
 g = 9.81
-wind = 0
+wind = 5
 m = 200
-mu = 0.5
-p = 1.5
+mu = 1.2
+p = 1.8
 
 def wind_direction(w):
-
     if (w > 0):
         return str(w) + 'm/s tailwind'
     return str(-w) + 'm/s headwind'
 
 #-----Set the timespan and the discretization points----------
 
+
 initial_time = 0
-final_time = 7.9
-discretization_points = 5000
-
+final_time = 4
+discretization_points = 10000
 time = np.linspace(initial_time, final_time, discretization_points)
-
 
 #------Call odeint in order to find the solution of the ivp----
 
-ideal_solution = odeint(projectile, s0, time, args=(g, 0, m, 0, p))
-real_solution = odeint(projectile, s0, time, args=(g, wind, m, mu, p))
+ideal_solution = odeint(projectile, initial_conditions, time, args=(g, 0, m, 0, p))
+real_solution = odeint(projectile, initial_conditions, time, args=(g, wind, m, mu, p))
 
 #------Unpacking the solutions----------------------------------
 
@@ -72,12 +74,11 @@ real_vy = real_solution[:,3]
 
 #------Define the max range function---------------------------
 
-def max_range(t, x, y):
+def max_range(t, x, y, vx, vy):
 
     for i in range(len(y)-1):
-        if (y[i]*y[i + 1] < 0):
-            return 'Max range: ' + str(round(x[i], 2)) + 'm in t = ' + str(round(t[i], 2)) + 's'
-    
+        if (y[i]*y[i + 1] < 0): #Bolzano's theorem
+            return 'Max range: ' + str(round(x[i], 2)) + 'm in t = ' + str(round(t[i], 2)) + 's' + '\n' + 'Final speed: ' + str(round(math.sqrt(vx[i]**2 + vy[i]**2))) + 'm/s'
     return 'Max range out of timespan'
 
 
@@ -86,7 +87,7 @@ def max_range(t, x, y):
 def max_height(x, y, vy):
 
     for i in range(len(vy)-1):
-        if (vy[i]*vy[i + 1] < 0):
+        if (vy[i]*vy[i + 1] < 0): # vy changes direction
             return 'Max height: ' + str(round(y[i], 1)) + 'm at x = ' + str(round(x[i], 2)) + 'm'
 
 #------Define the kinetic energy function----------------------
@@ -126,17 +127,14 @@ def plot_trajectory():
     axis = plt.subplot()
     axis.set_ylabel('Height (m)')
     axis.set_xlabel('Range (m)')
-    axis.plot(real_x, real_y, label='Real trajectory ' + max_range(time, real_x, real_y) + '\n' + max_height(real_x, real_y, real_vy))
-    axis.plot(ideal_x, ideal_y, label='Ideal trajectory '+ max_range(time, ideal_x, ideal_y) + '\n' + max_height(ideal_x, ideal_y, ideal_vy))
-    plt.text(50 , 10, r'$ \theta = $' + str(theta) + '°' + '\n' + '$V_0 = $ ' + str(v0) + 'm/s' + '\n' + wind_direction(wind))
+    axis.plot(real_x, real_y, label='Real trajectory ' + max_range(time, real_x, real_y, real_vx, real_vy) + '\n' + max_height(real_x, real_y, real_vy))
+    axis.plot(ideal_x, ideal_y, label='Ideal trajectory '+ max_range(time, ideal_x, ideal_y, ideal_vx, ideal_vy) + '\n' + max_height(ideal_x, ideal_y, ideal_vy))
+    plt.text(10 , 10, r'$ \theta = $' + str(theta) + '°' + '\n' + '$V_0 = $ ' + str(v0) + 'm/s' + '\n' + wind_direction(wind))
     plt.legend()
     plt.grid()
     plt.show()
 
     return
-
-
-
 
 #------Plot the energy---------------------------------------
 
@@ -154,4 +152,4 @@ def plot_energy():
 
     return
 
-plot_energy()
+plot_trajectory()
