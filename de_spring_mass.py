@@ -60,13 +60,14 @@ def plot_trajectory():
 
     plt.show()
 
-def plot_phase():
+def plot_phase(x, p):
 
     axis = plt.subplot()
-    axis.plot(x1_t, x2_t, color='green')
+    axis.plot(x, p, color='green')
 
     plt.show()
 
-plot_phase()
+plot_phase(x1_t, m1*v1_t)
+plot_phase(x2_t, m2*v2_t)
 
 
